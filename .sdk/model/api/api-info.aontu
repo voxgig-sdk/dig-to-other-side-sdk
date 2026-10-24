@@ -1,0 +1,25 @@
+# API Information
+
+
+main: {
+  kit: {
+    info: {
+      auth: false
+      description: `The antipode of any latitude/longitude and what digging straight through the Earth to it would mean, from the api.tasta.space hub: where you come out (land, sea or Antarctic ice, from Natural Earth 1:10m shapes), the nearest shore, tunnel length, fall time through a uniform and a real Earth, top speed, the Kola borehole for comparison, and a verdict. GET only, JSON in a {"data": ..., "meta": ...} envelope, no key needed (anonymous callers get 30 requests a minute and 1,000 a day per IP, shared across every API on the hub).
+
+Sources: the documentation page https://api.tasta.space/dig and the hub rules at https://api.tasta.space/docs, with /dig probed live on 2026-10-23 (Bucharest, Madrid, Sydney, Honolulu, both poles, and a 422 for lat=91).
+
+Not modelled: format=text (one plain-text line) and /dig/image, which returns an SVG or PNG cross-section rather than JSON. Unverified: a null nearest_land.country (every nearest coast probed had one).`
+      servers: [
+        {
+          url: "https://api.tasta.space/v1"
+        }
+      ]
+      summary: "The antipode of any latitude/longitude and what digging straight through the Earth to it would mean, from the api.tasta.space hub: where you come out (land, sea or Antarctic ice, from Natural Earth 1:10m shapes), the nearest shore, tunnel…"
+      title: "Dig to the Other Side"
+      version: "1.0.0"
+      website: "https://api.tasta.space/dig"
+    }
+  }
+}
+

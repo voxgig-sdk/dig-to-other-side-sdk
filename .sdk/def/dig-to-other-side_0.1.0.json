@@ -1,0 +1,362 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dig to the Other Side",
+    "version": "1.0.0",
+    "description": "The antipode of any latitude/longitude and what digging straight through the Earth to it would mean, from the api.tasta.space hub: where you come out (land, sea or Antarctic ice, from Natural Earth 1:10m shapes), the nearest shore, tunnel length, fall time through a uniform and a real Earth, top speed, the Kola borehole for comparison, and a verdict. GET only, JSON in a {\"data\": ..., \"meta\": ...} envelope, no key needed (anonymous callers get 30 requests a minute and 1,000 a day per IP, shared across every API on the hub).\n\nSources: the documentation page https://api.tasta.space/dig and the hub rules at https://api.tasta.space/docs, with /dig probed live on 2026-10-23 (Bucharest, Madrid, Sydney, Honolulu, both poles, and a 422 for lat=91).\n\nNot modelled: format=text (one plain-text line) and /dig/image, which returns an SVG or PNG cross-section rather than JSON. Unverified: a null nearest_land.country (every nearest coast probed had one)."
+  },
+  "externalDocs": {
+    "description": "Dig to the other side on api.tasta.space",
+    "url": "https://api.tasta.space/dig"
+  },
+  "servers": [
+    {
+      "url": "https://api.tasta.space/v1"
+    }
+  ],
+  "paths": {
+    "/dig": {
+      "get": {
+        "operationId": "getDig",
+        "summary": "Dig straight through the Earth",
+        "description": "The dig from lat, lon: both ends, the nearest land when you come out at sea, the fall, and the verdict.",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "description": "Latitude in decimal degrees, -90 to 90, south negative.",
+            "schema": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "example": 44.4268
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": true,
+            "description": "Longitude in decimal degrees, -180 to 180, west negative. Values past 180 are refused, not wrapped.",
+            "schema": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "example": 26.1025
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The dig.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Dig"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "radius_km": {
+                          "type": "integer",
+                          "description": "Earth's mean radius used.",
+                          "example": 6371
+                        },
+                        "notes": {
+                          "type": "object",
+                          "description": "Notes on the method, keyed by field (uniform_earth, real_earth, nearest_land, depth_record).",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "data": {
+                          "type": "string",
+                          "description": "Map data credit.",
+                          "example": "Natural Earth (public domain)"
+                        }
+                      },
+                      "required": [
+                        "radius_km",
+                        "notes",
+                        "data"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "invalid_parameter: lat or lon missing, not a number, or off the planet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Anonymous limit reached (30 a minute, 1,000 a day per IP across the whole api.tasta.space hub); see Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Dig": {
+        "type": "object",
+        "description": "A dig straight through the centre of the Earth from one point to its antipode.",
+        "properties": {
+          "from": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "to": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "land": {
+            "type": "boolean",
+            "description": "Whether the far end is solid (land or ice).",
+            "example": false
+          },
+          "nearest_land": {
+            "type": "object",
+            "description": "When the far end is water: the closest coast. null on land or ice.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The nearest coast (an island or country).",
+                "example": "Chatham Islands"
+              },
+              "country": {
+                "type": "string",
+                "description": "Its country.",
+                "example": "New Zealand"
+              },
+              "km": {
+                "type": "integer",
+                "description": "Great-circle distance to it, approximate to a few kilometres.",
+                "example": 1761
+              },
+              "lat": {
+                "type": "number",
+                "example": -44.27
+              },
+              "lon": {
+                "type": "number",
+                "example": -176.11
+              }
+            },
+            "required": [
+              "name",
+              "country",
+              "km",
+              "lat",
+              "lon"
+            ],
+            "nullable": true
+          },
+          "tunnel_km": {
+            "type": "integer",
+            "description": "Length of the tunnel (the Earth's mean diameter).",
+            "example": 12742
+          },
+          "fall_minutes": {
+            "type": "object",
+            "description": "How long the fall takes.",
+            "properties": {
+              "uniform_earth": {
+                "type": "number",
+                "description": "Fall time through an Earth of even density, no air, no friction.",
+                "example": 42.2
+              },
+              "real_earth": {
+                "type": "number",
+                "description": "Fall time through the real, layered Earth (PREM, Klotz 2015).",
+                "example": 38.2
+              }
+            },
+            "required": [
+              "uniform_earth",
+              "real_earth"
+            ]
+          },
+          "top_speed_kmh": {
+            "type": "integer",
+            "description": "Speed at the centre, even density.",
+            "example": 28475
+          },
+          "depth_record": {
+            "type": "object",
+            "description": "The deepest hole humans have dug, how much of the tunnel it is, and how long the whole tunnel would take at its pace.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Kola Superdeep Borehole"
+              },
+              "where": {
+                "type": "string",
+                "example": "Murmansk Oblast, Russia"
+              },
+              "depth_m": {
+                "type": "integer",
+                "description": "True vertical depth.",
+                "example": 12262
+              },
+              "year": {
+                "type": "integer",
+                "example": 1989
+              },
+              "share_of_tunnel_percent": {
+                "type": "number",
+                "example": 0.0962
+              },
+              "years_for_the_whole_tunnel_at_that_pace": {
+                "type": "integer",
+                "example": 19700
+              }
+            },
+            "required": [
+              "name",
+              "where",
+              "depth_m",
+              "year",
+              "share_of_tunnel_percent",
+              "years_for_the_whole_tunnel_at_that_pace"
+            ]
+          },
+          "verdict": {
+            "type": "string",
+            "description": "What to pack. The same point always gets the same verdict.",
+            "example": "Splash landing in the South Pacific Ocean. Learn to swim first, the shore is 1,761 km away."
+          },
+          "image": {
+            "type": "string",
+            "description": "Link to the cross-section picture of this dig (SVG; format=png for PNG). Not a JSON endpoint.",
+            "example": "https://api.tasta.space/v1/dig/image?lat=44.4268&lon=26.1025"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "land",
+          "nearest_land",
+          "tunnel_km",
+          "fall_minutes",
+          "top_speed_kmh",
+          "depth_record",
+          "verdict",
+          "image"
+        ]
+      },
+      "Place": {
+        "type": "object",
+        "description": "One end of the tunnel.",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude in decimal degrees.",
+            "example": 44.4268
+          },
+          "lon": {
+            "type": "number",
+            "description": "Longitude in decimal degrees.",
+            "example": 26.1025
+          },
+          "place": {
+            "type": "string",
+            "description": "The country, or the ocean or sea (Antarctica for the ice).",
+            "example": "Romania"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country name, or null at sea and in Antarctica.",
+            "example": "Romania",
+            "nullable": true
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code (AQ for Antarctica), or null at sea.",
+            "example": "RO",
+            "nullable": true
+          },
+          "island": {
+            "type": "string",
+            "description": "The island, when the point is on one; otherwise null.",
+            "nullable": true,
+            "example": "Oahu"
+          },
+          "surface": {
+            "type": "string",
+            "description": "land, ice (Antarctica) or water.",
+            "enum": [
+              "land",
+              "ice",
+              "water"
+            ],
+            "example": "land"
+          },
+          "water_type": {
+            "type": "string",
+            "description": "ocean, sea, gulf, bay, strait and so on, when surface is water; otherwise null.",
+            "nullable": true,
+            "example": "ocean"
+          }
+        },
+        "required": [
+          "lat",
+          "lon",
+          "place",
+          "country",
+          "country_code",
+          "island",
+          "surface",
+          "water_type"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "description": "The hub's error envelope.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Stable machine-readable code (the hub's codes plus this API's own).",
+                "example": "invalid_parameter"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable message; may be a joke.",
+                "example": "That latitude is off the planet. Earth goes from -90 (the South Pole) to 90 (the North Pole)."
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}

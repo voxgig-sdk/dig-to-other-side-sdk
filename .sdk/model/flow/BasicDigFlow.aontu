@@ -1,0 +1,28 @@
+# BasicDigFlow
+
+main: kit: flow: BasicDigFlow:
+{
+  entity: "dig",
+  kind: "basic",
+  name: "BasicDigFlow",
+  step: [
+    {
+      i: {
+        ref: "dig_ref01",
+        srcdatavar: "dig_ref01_data",
+        suffix: "_dt0"
+      }
+
+      o: "load",
+      v: [
+        {
+          apply: "TextFieldMark",
+          def: {
+            mark: "Mark01-dig_ref01"
+          }
+        }
+      ]
+    }
+  ],
+  "key$": "BasicDigFlow"
+}

@@ -1,0 +1,36 @@
+{
+  "existing": {
+    "dig": {
+      "DIG00": {
+        "data": {},
+        "meta": {},
+        "id": "DIG00"
+      },
+      "DIG01": {
+        "data": {},
+        "meta": {},
+        "id": "DIG01"
+      },
+      "DIG02": {
+        "data": {},
+        "meta": {},
+        "id": "DIG02"
+      }
+    }
+  },
+  "new": {
+    "dig": {
+      "dig_ref01": {
+        "data": {},
+        "meta": {}
+      }
+    }
+  },
+  "requests": {
+    "GET /dig": {
+      "provenance": "operation-contract",
+      "version": 2,
+      "source": "openapi3"
+    }
+  }
+}

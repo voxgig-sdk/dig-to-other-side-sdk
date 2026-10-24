@@ -1,0 +1,72 @@
+<?php
+declare(strict_types=1);
+
+// DigToOtherSide SDK utility registration
+
+require_once __DIR__ . '/../core/UtilityType.php';
+require_once __DIR__ . '/Clean.php';
+require_once __DIR__ . '/Done.php';
+require_once __DIR__ . '/MakeError.php';
+require_once __DIR__ . '/FeatureAdd.php';
+require_once __DIR__ . '/FeatureHook.php';
+require_once __DIR__ . '/FeatureInit.php';
+require_once __DIR__ . '/Fetcher.php';
+require_once __DIR__ . '/MakeFetchDef.php';
+require_once __DIR__ . '/MakeContext.php';
+require_once __DIR__ . '/MakeOptions.php';
+require_once __DIR__ . '/MakeRequest.php';
+require_once __DIR__ . '/MakeResponse.php';
+require_once __DIR__ . '/MakeResult.php';
+require_once __DIR__ . '/MakePoint.php';
+require_once __DIR__ . '/MakeSpec.php';
+require_once __DIR__ . '/MakeUrl.php';
+require_once __DIR__ . '/Param.php';
+require_once __DIR__ . '/PrepareAuth.php';
+require_once __DIR__ . '/PrepareBody.php';
+require_once __DIR__ . '/Graphql.php';
+require_once __DIR__ . '/PrepareHeaders.php';
+require_once __DIR__ . '/PrepareMethod.php';
+require_once __DIR__ . '/PrepareParams.php';
+require_once __DIR__ . '/PreparePath.php';
+require_once __DIR__ . '/PrepareQuery.php';
+require_once __DIR__ . '/ResultBasic.php';
+require_once __DIR__ . '/ResultBody.php';
+require_once __DIR__ . '/ResultHeaders.php';
+require_once __DIR__ . '/TransformRequest.php';
+require_once __DIR__ . '/TransformResponse.php';
+
+DigToOtherSideUtility::setRegistrar(function (DigToOtherSideUtility $u): void {
+    $u->clean = [DigToOtherSideClean::class, 'call'];
+    $u->clean_add = [DigToOtherSideClean::class, 'add'];
+    $u->clean_explain = [DigToOtherSideDone::class, 'clean_explain'];
+    $u->done = [DigToOtherSideDone::class, 'call'];
+    $u->make_error = [DigToOtherSideMakeError::class, 'call'];
+    $u->feature_add = [DigToOtherSideFeatureAdd::class, 'call'];
+    $u->feature_hook = [DigToOtherSideFeatureHook::class, 'call'];
+    $u->feature_init = [DigToOtherSideFeatureInit::class, 'call'];
+    $u->fetcher = [DigToOtherSideFetcher::class, 'call'];
+    $u->make_fetch_def = [DigToOtherSideMakeFetchDef::class, 'call'];
+    $u->make_context = [DigToOtherSideMakeContext::class, 'call'];
+    $u->make_options = [DigToOtherSideMakeOptions::class, 'call'];
+    $u->make_request = [DigToOtherSideMakeRequest::class, 'call'];
+    $u->make_response = [DigToOtherSideMakeResponse::class, 'call'];
+    $u->make_result = [DigToOtherSideMakeResult::class, 'call'];
+    $u->make_point = [DigToOtherSideMakePoint::class, 'call'];
+    $u->make_spec = [DigToOtherSideMakeSpec::class, 'call'];
+    $u->make_url = [DigToOtherSideMakeUrl::class, 'call'];
+    $u->param = [DigToOtherSideParam::class, 'call'];
+    $u->prepare_auth = [DigToOtherSidePrepareAuth::class, 'call'];
+    $u->prepare_body = [DigToOtherSidePrepareBody::class, 'call'];
+    $u->prepare_headers = [DigToOtherSidePrepareHeaders::class, 'call'];
+    $u->prepare_method = [DigToOtherSidePrepareMethod::class, 'call'];
+    $u->prepare_params = [DigToOtherSidePrepareParams::class, 'call'];
+    $u->prepare_path = [DigToOtherSidePreparePath::class, 'call'];
+    $u->prepare_query = [DigToOtherSidePrepareQuery::class, 'call'];
+    $u->graphql_body = [DigToOtherSideGraphql::class, 'body'];
+    $u->graphql_errors = [DigToOtherSideGraphql::class, 'errors'];
+    $u->result_basic = [DigToOtherSideResultBasic::class, 'call'];
+    $u->result_body = [DigToOtherSideResultBody::class, 'call'];
+    $u->result_headers = [DigToOtherSideResultHeaders::class, 'call'];
+    $u->transform_request = [DigToOtherSideTransformRequest::class, 'call'];
+    $u->transform_response = [DigToOtherSideTransformResponse::class, 'call'];
+});
